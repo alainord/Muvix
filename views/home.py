@@ -7,33 +7,45 @@ if not hasattr(ft, "icons") and hasattr(ft, "Icons"):
     ft.icons = ft.Icons  # type: ignore[attr-defined]
 
 from components.app_bar import app_bar
+from views.data import MOVIES
 
 
-def home_section(title: str, items: list[dict[str, str]]) -> ft.Column:
-    chips = [
-        ft.Container(
-            bgcolor=ft.colors.SURFACE,
-            border_radius=12,
-            content=ft.Column(
-                [
-                    ft.Container(
-                        height=120,
-                        bgcolor=ft.colors.GREY_800,
-                        border_radius=12,
-                        alignment=ft.alignment.center,
-                        content=ft.Text(i["title"], size=14, color=ft.colors.WHITE70),
-                    ),
-                    ft.Text(i.get("subtitle", ""), size=12, color=ft.colors.WHITE70),
-                ],
-                spacing=6,
-                tight=True,
-                horizontal_alignment=ft.CrossAxisAlignment.START,
-            ),
-            padding=8,
-            width=160,
+def home_section(page: ft.Page, title: str, items: list[dict[str, str]]) -> ft.Column:
+    chips = []
+
+    for i in items:
+        chips.append(
+            ft.Container(
+                bgcolor=ft.colors.SURFACE,
+                border_radius=12,
+                padding=8,
+                width=160,
+                on_click=lambda e, movie_id=i["id"]: page.go(f"/movie/{movie_id}"),
+                content=ft.Column(
+                    [
+                        # Imagen del poster (pequeña)
+                        ft.Container(
+                            height=120,
+                            border_radius=12,
+                            clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
+                            content=ft.Image(
+                                src=f"assets/{i['poster']}",   # ← cambiado aquí
+                                fit=ft.ImageFit.COVER,
+                            ),
+                        ),
+                        # Título
+                        ft.Text(
+                            i["title"],
+                            size=12,
+                            color=ft.colors.WHITE70
+                        ),
+                    ],
+                    spacing=6,
+                    tight=True,
+                    horizontal_alignment=ft.CrossAxisAlignment.START,
+                ),
+            )
         )
-        for i in items
-    ]
 
     return ft.Column(
         [
@@ -101,20 +113,19 @@ def banner() -> ft.Container:
 
 
 def home_view(page: ft.Page) -> ft.View:
-    dummy_items = [{"title": f"Movie {i+1}", "subtitle": "Action"} for i in range(12)]
-    trending = [{"title": f"Show {i+1}", "subtitle": "Drama"} for i in range(10)]
-    recommended = [{"title": f"Pick {i+1}", "subtitle": "Sci-Fi"} for i in range(10)]
+    # Las listas reales vienen de data.py
+    movie_list = list(MOVIES.values())
 
     body = ft.ListView(
         controls=[
             ft.Container(height=8),
             banner(),
             ft.Container(height=16),
-            home_section("Trending now", trending),
+            home_section(page, "Trending now", movie_list),
             ft.Container(height=6),
-            home_section("Because you watched", dummy_items),
+            home_section(page, "Because you watched", movie_list),
             ft.Container(height=6),
-            home_section("Recommended for you", recommended),
+            home_section(page, "Recommended for you", movie_list),
             ft.Container(height=16),
         ],
         spacing=0,
