@@ -122,7 +122,7 @@ def home_view(page: ft.Page) -> ft.View:
     )
 
     return ft.View(
-        route="/",
+        route="/home",
         controls=[
             app_bar(page, "Muvix"),
             ft.Container(padding=12, content=body, expand=True),
