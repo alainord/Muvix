@@ -110,8 +110,13 @@ def login_view(page: ft.Page) -> ft.View:
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=15, # A little less space so the error fits
             controls=[
-                ft.Icon(name=ft.icons.MOVIE_CREATION_OUTLINED, size=80, color=ft.colors.BLACK),
-                ft.Container(height=5),
+                ft.Image(
+                    src="images/Muvix_M.png", 
+                    width=80, 
+                    height=80, 
+                    color=ft.colors.BLACK 
+                ),
+                ft.Container(height=10),
                 
                 create_input_field("Username", ref=username_ref),
                 create_input_field("Password", ref=password_ref, is_password=True),

@@ -111,7 +111,12 @@ def register_view(page: ft.Page) -> ft.View:
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=0,
             controls=[
-                ft.Icon(name=ft.icons.MOVIE_CREATION_OUTLINED, size=80, color=ft.colors.BLACK),
+                ft.Image(
+                    src="images/Muvix_M.png", 
+                    width=80, 
+                    height=80, 
+                    color=ft.colors.BLACK 
+                ),
                 ft.Container(height=10),
                 
                 # --- FULL NAME ---

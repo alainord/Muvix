@@ -18,7 +18,7 @@ def init_view(page: ft.Page) -> ft.View:
     background = ft.Container(
         expand=True,  # Forces the container to fill the available space
         image=ft.DecorationImage(
-            src="fondo_home.png",
+            src="images/fondo_home.png",
             fit=ft.ImageFit.COVER,
             opacity=0.35  # The opacity is applied to the image here
         )

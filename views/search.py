@@ -75,13 +75,20 @@ def search_view(page: ft.Page) -> ft.View:
         expand=True,     # importante
     )
 
+    # 1. Creamos la barra y la guardamos en una variable
+    my_bar = app_bar(page, "Search", back=True)
+
+    # 2. Sobrescribimos la acción del botón de atrás para ir a /home
+    if my_bar.leading:
+        my_bar.leading.on_click = lambda _: page.go("/home")
+
     # -------------------------
     #   VIEW COMPLETA
     # -------------------------
     return ft.View(
         route="/search",
         controls=[
-            app_bar(page, "Search", back=True),  # ← botón atrás activado
+            my_bar,
 
             ft.Column(
                 [

@@ -199,7 +199,12 @@ def payment_view(page: ft.Page) -> ft.View:
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=0, # Manual spacing
             controls=[
-                ft.Icon(name=ft.icons.CREDIT_CARD, size=80, color=ft.colors.BLACK),
+                ft.Image(
+                    src="images/Muvix_M.png", 
+                    width=80, 
+                    height=80, 
+                    color=ft.colors.BLACK 
+                ),
                 ft.Container(height=10), 
                 
                 # --- CARD SECTION ---

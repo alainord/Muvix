@@ -113,7 +113,7 @@ def details_view(page: ft.Page, item_id: str) -> ft.View:
                         content=ft.IconButton(
                             icon=ft.icons.ARROW_BACK,
                             icon_color=ft.colors.WHITE,
-                            on_click=lambda e: page.go("/")
+                            on_click=lambda e: page.go("/home")
                         )
                     ),
                 ]

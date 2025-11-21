@@ -65,7 +65,12 @@ def buy_subscription_view(page: ft.Page) -> ft.View:
             spacing=20,
             controls=[
                 # 1. Logo
-                ft.Icon(name=ft.icons.MOVIE_CREATION_OUTLINED, size=80, color=ft.colors.BLACK),
+                ft.Image(
+                    src="images/Muvix_M.png", 
+                    width=80, 
+                    height=80, 
+                    color=ft.colors.BLACK 
+                ),
                 
                 # 2. Features List
                 ft.Column(
