@@ -4,6 +4,11 @@ from .details import details_view
 from .home import home_view
 from .profile import profile_view
 from .search import search_view
+from .buy_subscription import buy_subscription_view
+from .register import register_view
+from .payment import payment_view
+from .payment_success import payment_success_view
+from .login import login_view
 
 def init_view(page: ft.Page) -> ft.View:
     page.title = "Muvix - All your entertainment in one place"

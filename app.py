@@ -64,7 +64,7 @@ except Exception:
 
 from components import navigation_bar
 from components.app_bar import app_bar
-from views import details_view, home_view, init_view, profile_view, search_view
+from views import details_view, home_view, init_view, profile_view, search_view, buy_subscription_view, register_view, payment_view, payment_success_view, login_view
 
 
 def main(page: ft.Page) -> None:
@@ -80,6 +80,16 @@ def main(page: ft.Page) -> None:
             page.views.append(init_view(page))
         elif template.match("/home"):
             page.views.append(home_view(page))
+        elif template.match("/signup"):
+            page.views.append(buy_subscription_view(page))
+        elif template.match("/register"):
+             page.views.append(register_view(page))
+        elif template.match("/payment"):
+             page.views.append(payment_view(page))
+        elif template.match("/payment_success"): 
+             page.views.append(payment_success_view(page))
+        elif template.match("/login"):
+             page.views.append(login_view(page))
         elif template.match("/search"):
             page.views.append(search_view(page))
         elif template.match("/profile"):
@@ -115,4 +125,4 @@ def main(page: ft.Page) -> None:
 
 
 if __name__ == "__main__":
-    ft.app(target=main, assets_dir="assets", view=ft.WEB_BROWSER)
+    ft.app(target=main, assets_dir="assets")
