@@ -6,8 +6,7 @@ if not hasattr(ft, "colors") and hasattr(ft, "Colors"):
 if not hasattr(ft, "icons") and hasattr(ft, "Icons"):
     ft.icons = ft.Icons  # type: ignore[attr-defined]
 
-
-def app_bar(page: ft.Page, title: str, back: bool = False) -> ft.AppBar:
+def app_bar(page: ft.Page, title, back: bool = False) -> ft.AppBar:
     actions = [
         ft.IconButton(ft.Icons.SEARCH, tooltip="Search", on_click=lambda e: page.go("/search")),
         ft.IconButton(ft.Icons.NOTIFICATIONS_OUTLINED, tooltip="Notifications"),
@@ -19,9 +18,8 @@ def app_bar(page: ft.Page, title: str, back: bool = False) -> ft.AppBar:
     )
     return ft.AppBar(
         leading=leading,
-        title=ft.Text(title),
+        title=title if isinstance(title, ft.Control) else ft.Text(title),
         center_title=False,
         bgcolor=ft.colors.SURFACE,
         actions=actions if not back else None,
     )
-
