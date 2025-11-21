@@ -71,7 +71,21 @@ def main(page: ft.Page) -> None:
     page.title = "Muvix"
     page.theme_mode = ft.ThemeMode.DARK
     page.padding = 0
+    page.window_maximized = True
+    page.prevent_scroll_bounce = True  # evita rebote vertical (complementario)
 
+    # 🔥 Inyectar JS para desactivar navegación por gestos horizontales
+    page.html = """
+    <script>
+    window.addEventListener("wheel", function(e) {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+            e.preventDefault();  // bloquea gesto horizontal
+        }
+    }, { passive: false });
+    </script>
+    """
+
+    
     def route_change(e: ft.RouteChangeEvent) -> None:
         page.views.clear()
         template = ft.TemplateRoute(page.route)
@@ -109,8 +123,6 @@ def main(page: ft.Page) -> None:
                 )
             )
 
-        if page.views:
-            page.views[-1].controls.append(navigation_bar(page))
         page.update()
 
     def view_pop(e: ft.ViewPopEvent) -> None:

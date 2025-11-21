@@ -3,38 +3,59 @@ import flet as ft
 # Flet compatibility shim (handles versions with ft.Colors/ft.Icons)
 if not hasattr(ft, "colors") and hasattr(ft, "Colors"):
     ft.colors = ft.Colors  # type: ignore[attr-defined]
-if not hasattr(ft, "icons") and hasattr(ft, "Icons"):
+if not hasattr(ft, "icons") and hasattr(ft.Icons):
     ft.icons = ft.Icons  # type: ignore[attr-defined]
 
 from components.app_bar import app_bar
+from data.movies_mock import movies_mock
 
 
 def search_view(page: ft.Page) -> ft.View:
-    def on_search(e: ft.ControlEvent) -> None:
+
+    # -------------------------
+    #   FUNCIÓN DE BÚSQUEDA
+    # -------------------------
+    def on_search(e: ft.ControlEvent):
         query = (search.value or "").strip().lower()
         results.controls.clear()
+
         if query:
-            for i in range(12):
+            filtered = [
+                m for m in movies_mock
+                if query in m["title"].lower()
+            ]
+
+            for movie in filtered:
                 results.controls.append(
                     ft.Container(
                         bgcolor=ft.colors.SURFACE,
                         border_radius=12,
+                        padding=8,
+                        on_click=lambda e, mid=movie["id"]: page.go(f"/movie/{mid}"),
                         content=ft.Column(
                             [
                                 ft.Container(
-                                    height=120,
-                                    bgcolor=ft.colors.GREY_800,
+                                    height=160,
                                     border_radius=12,
+                                    content=ft.Image(
+                                        src=movie["poster"],
+                                        fit=ft.ImageFit.COVER,
+                                        border_radius=12,
+                                    ),
                                 ),
-                                ft.Text(f"Result {i+1}", size=12),
+                                ft.Text(movie["title"], size=12, weight=ft.FontWeight.BOLD),
+                                ft.Text(movie["genre"], size=11, color=ft.colors.WHITE70),
                             ],
-                            spacing=6,
+                            spacing=4,
                         ),
-                        padding=8,
                     )
                 )
+
         page.update()
 
+    # -------------------------
+    #   CAMPO DE BÚSQUEDA
+    # -------------------------
     search = ft.TextField(
         hint_text="Search movies, shows...",
         prefix_icon=ft.Icons.SEARCH,
@@ -43,21 +64,39 @@ def search_view(page: ft.Page) -> ft.View:
         border_radius=12,
     )
 
+    # -------------------------
+    #   GRID DE RESULTADOS
+    # -------------------------
     results = ft.GridView(
-        runs_count=2,
-        max_extent=None,
-        child_aspect_ratio=0.75,
+        max_extent=180,
+        child_aspect_ratio=0.65,
         spacing=12,
         run_spacing=12,
-        expand=True,
+        expand=True,     # importante
     )
 
+    # -------------------------
+    #   VIEW COMPLETA
+    # -------------------------
     return ft.View(
         route="/search",
         controls=[
-            app_bar(page, "Search"),
-            ft.Container(padding=12, content=ft.Column([search, results], expand=True)),
+            app_bar(page, "Search", back=True),  # ← botón atrás activado
+
+            ft.Column(
+                [
+                    search,
+
+                    # El contenedor expandible es lo que habilita el scroll interno
+                    ft.Container(
+                        expand=True,
+                        content=results
+                    ),
+                ],
+                expand=True,
+            ),
         ],
         padding=0,
         bgcolor=ft.colors.BACKGROUND,
+        scroll=None,   # evita que el View bloquee el scroll interno
     )
