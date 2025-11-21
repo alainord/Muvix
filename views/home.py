@@ -126,12 +126,13 @@ def banner() -> ft.Container:
         ),
     )
     
-def movie_card(movie):
+def movie_card(movie, page: ft.Page) -> ft.Container:
     return ft.Container(
         width=140,
         bgcolor=ft.colors.SURFACE,
         border_radius=12,
         padding=4,
+        on_click=lambda e, movie_id=movie["id"]: page.go(f"/movie/{movie_id}"),
         content=ft.Column(
             [
                 ft.Image(
@@ -149,13 +150,14 @@ def movie_card(movie):
     )
 
 
-def trending_card(movie):
+def trending_card(movie, page: ft.Page) -> ft.Container:
     return ft.Container(
         width=350,
         height=300,
         border_radius=16,
         clip_behavior=ft.ClipBehavior.HARD_EDGE,  # fuerza el recorte
         bgcolor=None,  # asegura fondo transparente
+        on_click=lambda e, movie_id=movie["id"]: page.go(f"/movie/{movie_id}"),
         content=ft.Stack(
             [
                 # Imagen principal
@@ -192,12 +194,12 @@ def trending_card(movie):
         ),
     )
     
-def movie_section(title: str, movies: list[dict[str, str]]) -> ft.Column:
+def movie_section(title: str, movies: list[dict[str, str]], page: ft.Page) -> ft.Column:
     # Si la sección es Trending, usa tarjetas grandes
     if "trending" in title.lower():
-        cards = [trending_card(m) for m in movies]
+        cards = [trending_card(m, page) for m in movies]
     else:
-        cards = [movie_card(m) for m in movies]
+        cards = [movie_card(m, page) for m in movies]
 
     return ft.Column(
         [
@@ -211,7 +213,6 @@ def movie_section(title: str, movies: list[dict[str, str]]) -> ft.Column:
     )
 
 
-
 def home_view(page: ft.Page) -> ft.View:
     dummy_items = [{"title": f"Movie {i+1}", "subtitle": "Action"} for i in range(12)]
     trending = [{"title": f"Show {i+1}", "subtitle": "Drama"} for i in range(10)]
@@ -219,11 +220,11 @@ def home_view(page: ft.Page) -> ft.View:
     
     body = ft.ListView(
         controls=[
-            movie_section("Trending now", random_movies(5)),
-            movie_section("Because you watched Action", get_movies_by_genre("Action")),
-            movie_section("Recommended for you", random_movies(5)),
-            movie_section("Horror picks", get_movies_by_genre("Horror")),
-            movie_section("Animation highlights", get_movies_by_genre("Animation")),
+            movie_section("Trending now", random_movies(5), page),
+            movie_section("Because you watched Action", get_movies_by_genre("Action"), page),
+            movie_section("Recommended for you", random_movies(5), page),
+            movie_section("Horror picks", get_movies_by_genre("Horror"), page),
+            movie_section("Animation highlights", get_movies_by_genre("Animation"), page),
         ],
         auto_scroll=False,
         spacing=16,

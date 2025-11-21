@@ -1,10 +1,13 @@
-from views.data import MOVIES
 import flet as ft
+from data.movies_mock import movies_mock
 from components.app_bar import app_bar
 
 
 def details_view(page: ft.Page, item_id: str) -> ft.View:
-    movie = MOVIES.get(item_id)
+    # Convertir ID (viene como str)
+    item_id = int(item_id)
+
+    movie = next((m for m in movies_mock if m["id"] == item_id), None)
 
     if not movie:
         return ft.View(
@@ -17,79 +20,103 @@ def details_view(page: ft.Page, item_id: str) -> ft.View:
             bgcolor=ft.colors.BACKGROUND,
         )
 
+    # ---------------------------------------------------
+    #  PANTALLA DE DETALLES – IMAGEN DE FONDO + TEXTO
+    # ---------------------------------------------------
     return ft.View(
         route=f"/movie/{item_id}",
         padding=0,
-        bgcolor=ft.colors.BACKGROUND,
+        bgcolor=ft.colors.BLACK,
         controls=[
-            app_bar(page, movie["title"], back=True),
+            ft.Stack(
+                [
+                    # 1️⃣ Imagen FULLSCREEN detrás
+                    ft.Image(
+                        src=movie['backdrop'],
+                        fit=ft.ImageFit.COVER,
+                        width=page.width,
+                        height=page.height,
+                        opacity=1.0,
+                    ),
 
-            # --- Backdrop grande ---
-            ft.Container(
-                height=260,
-                clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
-                content=ft.Stack(
-                    [
-                        # Imagen horizontal grande
-                        ft.Image(
-                            src=f"assets/{movie['backdrop']}",
-                            fit=ft.ImageFit.COVER,
-                            width=float("inf"),
-                        ),
-
-                        # Degradado para legibilidad (opcional)
-                        ft.Container(
-                            gradient=ft.LinearGradient(
-                                begin=ft.Alignment(0, -1),
-                                end=ft.Alignment(0, 1),
-                                colors=[
-                                    ft.colors.with_opacity(0.0, ft.colors.BLACK),
-                                    ft.colors.with_opacity(0.8, ft.colors.BLACK),
-                                ],
-                            )
-                        )
-                    ]
-                )
-            ),
-
-            # --- Contenido principal ---
-            ft.Container(
-                padding=16,
-                content=ft.Column(
-                    [
-                        ft.Text(
-                            movie["title"],
-                            size=28,
-                            weight=ft.FontWeight.BOLD,
-                        ),
-                        ft.Text(
-                            f"{movie['genre']} • {movie['year']} • {movie['runtime']}",
-                            size=14,
-                            color=ft.colors.WHITE70,
-                        ),
-                        ft.Container(height=12),
-
-                        ft.Row(
-                            [
-                                ft.FilledButton("Play", icon=ft.Icons.PLAY_ARROW),
-                                ft.OutlinedButton(
-                                    "Add to list",
-                                    icon=ft.Icons.BOOKMARK_ADD_OUTLINED,
-                                ),
+                    # 2️⃣ Capa de degradado para que se lea bien el texto
+                    ft.Container(
+                        width=page.width,
+                        height=page.height,
+                        gradient=ft.LinearGradient(
+                            begin=ft.alignment.top_center,
+                            end=ft.alignment.bottom_center,
+                            colors=[
+                                ft.colors.TRANSPARENT,
+                                ft.colors.BLACK45,
+                                ft.colors.BLACK87,
                             ],
-                            spacing=10,
                         ),
+                    ),
 
-                        ft.Container(height=16),
+                    # 3️⃣ Contenido encima del fondo
+                   ft.Container(
+                        width=600,
+                        alignment=ft.alignment.bottom_center,
+                        padding=50,
+                        content=ft.Column(
+                            [
+                                ft.Text(
+                                    movie["title"],
+                                    size=50,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=ft.colors.WHITE,
+                                ),
+                                ft.Text(
+                                    movie["genre"],
+                                    size=24,
+                                    color=ft.colors.WHITE70,
+                                ),
 
-                        ft.Text(
-                            movie["description"],
-                            size=14,
-                            color=ft.colors.WHITE70,
+                                ft.Container(height=10),
+                                
+                                  ft.FilledButton(
+                                    "Play",
+                                    icon=ft.icons.PLAY_ARROW,
+                                    height=42,      # MÁS FINO
+                                    width=150,
+                                    style=ft.ButtonStyle(
+                                        shape=ft.RoundedRectangleBorder(radius=6),
+                                        color=ft.colors.BLACK,
+                                        bgcolor=ft.colors.WHITE,
+                                        padding=ft.Padding(10, 5, 10, 5),
+                                    ),
+                                ),
+
+                                ft.Text(
+                                    movie.get("description", ""),
+                                    size=20,
+                                    color=ft.colors.WHITE,
+                                    max_lines=4,
+                                    overflow=ft.TextOverflow.ELLIPSIS,
+                                ),
+
+                                ft.Container(height=20),
+
+                                # 4️⃣ Botón Play estrecho
+
+                                ft.Container(height=20),
+                            ],
+                            spacing=4,
                         ),
-                    ],
-                    spacing=8,
-                ),
-            ),
-        ],
+                    ),
+
+                    # 5️⃣ Botón BACK arriba (pero sin mover el contenido)
+                    ft.Container(
+                        padding=16,
+                        alignment=ft.alignment.top_left,
+                        content=ft.IconButton(
+                            icon=ft.icons.ARROW_BACK,
+                            icon_color=ft.colors.WHITE,
+                            on_click=lambda e: page.go("/")
+                        )
+                    ),
+                ]
+            )
+        ]
     )
